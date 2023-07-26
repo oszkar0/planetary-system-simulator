@@ -90,7 +90,7 @@ def main():
     clock = pygame.time.Clock()
 
     sun = HeavenlyBody(0, 0, 20, YELLOW, 2e30, 0, 0)
-    earth = HeavenlyBody(-HeavenlyBody.AU, 0, 5, BLUE, 6e26, 0, 29783)
+    earth = HeavenlyBody(-HeavenlyBody.AU, 0, 5, BLUE, 6e24, 0, 29783)
 
     planets = [sun, earth]
 
@@ -99,12 +99,19 @@ def main():
     while run:
         clock.tick(60)
 
+        WINDOW.fill(BLACK)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
+        for (planet1, planet2) in pairs:
+            planet1.calculate_attraction(planet2)
+
         for planet in planets:
             planet.draw(WINDOW)
+            planet.calculate_velocity()
+            planet.update_position()
+            planet.total_force_x, planet.total_force_y = 0, 0
 
         pygame.display.update()
 
