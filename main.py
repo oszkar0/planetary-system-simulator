@@ -1,5 +1,6 @@
 import pygame
 import math
+
 pygame.init()
 
 WIDTH, HEIGHT = 800, 800
@@ -65,13 +66,35 @@ class HeavenlyBody:
         self.y += (HeavenlyBody.TIMESTEP * self.vel_y)
 
 
+#  method for generating set of pairs object-object
+#  such that object must not be in pair with itself
+#  and there must only be one pair of object-object
+#  regardless of order in pair
+def generate_pairs(objects_list):
+    pairs = set()
+    seen_pairs = set()
+
+    for i in range(len(objects_list)):
+        for j in range(i + 1, len(objects_list)):
+            pair = (objects_list[i], objects_list[j])
+
+            if pair[0] != pair[1] and pair not in seen_pairs:
+                pairs.add(pair)
+                seen_pairs.add(pair)
+
+    return pairs
+
+
 def main():
     run = True
     clock = pygame.time.Clock()
 
     sun = HeavenlyBody(0, 0, 20, YELLOW, 2e30, 0, 0)
+    earth = HeavenlyBody(-HeavenlyBody.AU, 0, 5, BLUE, 6e26, 0, 29783)
 
-    planets = [sun]
+    planets = [sun, earth]
+
+    pairs = generate_pairs(planets)
 
     while run:
         clock.tick(60)
