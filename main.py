@@ -39,6 +39,31 @@ class HeavenlyBody:
 
         pygame.draw.circle(window, self.color, (x, y), self.radius)
 
+    def calculate_attraction(self, other_body):
+        x_diff = other_body.x - self.x
+        y_diff = other_body.y - self.y
+
+        dist_sq = x_diff ** 2 + y_diff ** 2
+
+        force = HeavenlyBody.G * self.mass * other_body.mass / dist_sq
+
+        alfa = math.atan2(y_diff, x_diff)
+        force_y = math.sin(alfa) * force
+        force_x = math.cos(alfa) * force
+
+        self.total_force_x += force_x
+        self.total_force_y += force_y
+        other_body.total_force_x -= force_x
+        other_body.total_force_y -= force_y
+
+    def calculate_velocity(self):
+        self.vel_x += (self.total_force_x / self.mass * HeavenlyBody.TIMESTEP)
+        self.vel_y += (self.total_force_y / self.mass * HeavenlyBody.TIMESTEP)
+
+    def update_position(self):
+        self.x += (HeavenlyBody.TIMESTEP * self.vel_x)
+        self.y += (HeavenlyBody.TIMESTEP * self.vel_y)
+
 
 def main():
     run = True
