@@ -16,6 +16,8 @@ CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 BLACK = (0, 0, 0)
 
+FONT = pygame.font.SysFont("comicsans", 16)
+
 
 class HeavenlyBody:
     AU = 1.496e11  # astronomical unit
@@ -23,7 +25,8 @@ class HeavenlyBody:
     PLANET_DIST_SCALE = 100 / AU
     TIMESTEP = 3600 * 24  # 1 day
 
-    def __init__(self, x, y, radius, color, mass, vel_x, vel_y):
+    def __init__(self, planet_name, x, y, radius, color, mass, vel_x, vel_y):
+        self.planet_name = planet_name
         self.x = x
         self.y = y
         self.radius = radius
@@ -40,6 +43,9 @@ class HeavenlyBody:
         y = self.y * HeavenlyBody.PLANET_DIST_SCALE + (HEIGHT / 2)
 
         pygame.draw.circle(window, self.color, (x, y), self.radius)
+
+        planet_name_text = FONT.render(f"{self.planet_name}", 1, WHITE)
+        WINDOW.blit(planet_name_text, (x - planet_name_text.get_width() / 2, y - planet_name_text.get_height() / 2))
 
         scaled_orbit_points = []
 
@@ -106,11 +112,11 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    sun = HeavenlyBody(0, 0, 15, YELLOW, 2e30, 0, 0)
-    earth = HeavenlyBody(-HeavenlyBody.AU, 0, 5, BLUE, 6e24, 0, 29783)
-    mars = HeavenlyBody(1.5 * HeavenlyBody.AU, 0, 7, RED, 6.39e23, 0, 24130)
-    venus = HeavenlyBody(-0.7 * HeavenlyBody.AU, 0, 6, CYAN, 4.87e24, 0, 35000)
-    mercury = HeavenlyBody(-0.3 * HeavenlyBody.AU, 0, 3, MAGENTA, 3.3e23, 0, 47000)
+    sun = HeavenlyBody("SUN", 0, 0, 15, YELLOW, 2e30, 0, 0)
+    earth = HeavenlyBody("EARTH", -HeavenlyBody.AU, 0, 5, BLUE, 6e24, 0, 29783)
+    mars = HeavenlyBody("MARS", 1.5 * HeavenlyBody.AU, 0, 7, RED, 6.39e23, 0, 24130)
+    venus = HeavenlyBody("VENUS", -0.7 * HeavenlyBody.AU, 0, 6, CYAN, 4.87e24, 0, 35000)
+    mercury = HeavenlyBody("MERCURY", -0.3 * HeavenlyBody.AU, 0, 3, MAGENTA, 3.3e23, 0, 47000)
 
     planets = [sun, earth, mars, venus, mercury]
 
