@@ -33,12 +33,24 @@ class HeavenlyBody:
         self.vel_y = vel_y
         self.total_force_x = 0
         self.total_force_y = 0
+        self.orbit = []
 
     def draw(self, window):
         x = self.x * HeavenlyBody.PLANET_DIST_SCALE + (WIDTH / 2)
         y = self.y * HeavenlyBody.PLANET_DIST_SCALE + (HEIGHT / 2)
 
         pygame.draw.circle(window, self.color, (x, y), self.radius)
+
+        scaled_orbit_points = []
+
+        if len(self.orbit) >= 2:
+            for point in self.orbit:
+                x = point[0] * HeavenlyBody.PLANET_DIST_SCALE + (WIDTH / 2)
+                y = point[1] * HeavenlyBody.PLANET_DIST_SCALE + (HEIGHT / 2)
+
+                scaled_orbit_points.append((x, y))
+
+            pygame.draw.lines(WINDOW, WHITE, False, scaled_orbit_points)
 
     def calculate_attraction(self, other_body):
         x_diff = other_body.x - self.x
@@ -65,6 +77,11 @@ class HeavenlyBody:
         self.x += (HeavenlyBody.TIMESTEP * self.vel_x)
         self.y += (HeavenlyBody.TIMESTEP * self.vel_y)
 
+        if len(self.orbit) > 100:
+            self.orbit.pop(0)
+
+        self.orbit.append((self.x, self.y))
+
 
 #  method for generating set of pairs object-object
 #  such that object must not be in pair with itself
@@ -89,10 +106,13 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    sun = HeavenlyBody(0, 0, 20, YELLOW, 2e30, 0, 0)
+    sun = HeavenlyBody(0, 0, 15, YELLOW, 2e30, 0, 0)
     earth = HeavenlyBody(-HeavenlyBody.AU, 0, 5, BLUE, 6e24, 0, 29783)
+    mars = HeavenlyBody(1.5 * HeavenlyBody.AU, 0, 7, RED, 6.39e23, 0, 24130)
+    venus = HeavenlyBody(-0.7 * HeavenlyBody.AU, 0, 6, CYAN, 4.87e24, 0, 35000)
+    mercury = HeavenlyBody(-0.3 * HeavenlyBody.AU, 0, 3, MAGENTA, 3.3e23, 0, 47000)
 
-    planets = [sun, earth]
+    planets = [sun, earth, mars, venus, mercury]
 
     pairs = generate_pairs(planets)
 
