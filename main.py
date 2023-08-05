@@ -3,7 +3,7 @@ import math
 
 pygame.init()
 
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 1000, 1000
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Planet System Simulation")
 
@@ -15,6 +15,7 @@ YELLOW = (255, 255, 0)
 CYAN = (0, 255, 255)
 MAGENTA = (255, 0, 255)
 BLACK = (0, 0, 0)
+ORANGE = (255, 127, 80)
 
 FONT = pygame.font.SysFont("comicsans", 16)
 
@@ -45,18 +46,9 @@ class HeavenlyBody:
         pygame.draw.circle(window, self.color, (x, y), self.radius)
 
         planet_name_text = FONT.render(f"{self.planet_name}", 1, WHITE)
-        WINDOW.blit(planet_name_text, (x - planet_name_text.get_width() / 2, y - planet_name_text.get_height() / 2))
-
-        scaled_orbit_points = []
-
-        if len(self.orbit) >= 2:
-            for point in self.orbit:
-                x = point[0] * HeavenlyBody.PLANET_DIST_SCALE + (WIDTH / 2)
-                y = point[1] * HeavenlyBody.PLANET_DIST_SCALE + (HEIGHT / 2)
-
-                scaled_orbit_points.append((x, y))
-
-            pygame.draw.lines(WINDOW, WHITE, False, scaled_orbit_points)
+        WINDOW.blit(
+            planet_name_text, (x - planet_name_text.get_width() / 2, y - planet_name_text.get_height() - self.radius)
+        )
 
     def calculate_attraction(self, other_body):
         x_diff = other_body.x - self.x
@@ -82,11 +74,6 @@ class HeavenlyBody:
     def update_position(self):
         self.x += (HeavenlyBody.TIMESTEP * self.vel_x)
         self.y += (HeavenlyBody.TIMESTEP * self.vel_y)
-
-        if len(self.orbit) > 100:
-            self.orbit.pop(0)
-
-        self.orbit.append((self.x, self.y))
 
 
 #  method for generating set of pairs object-object
@@ -114,11 +101,12 @@ def main():
 
     sun = HeavenlyBody("SUN", 0, 0, 15, YELLOW, 2e30, 0, 0)
     earth = HeavenlyBody("EARTH", -HeavenlyBody.AU, 0, 5, BLUE, 6e24, 0, 29783)
-    mars = HeavenlyBody("MARS", 1.5 * HeavenlyBody.AU, 0, 7, RED, 6.39e23, 0, 24130)
+    mars = HeavenlyBody("MARS", -1.5 * HeavenlyBody.AU, 0, 7, RED, 6.39e23, 0, 24130)
     venus = HeavenlyBody("VENUS", -0.7 * HeavenlyBody.AU, 0, 6, CYAN, 4.87e24, 0, 35000)
     mercury = HeavenlyBody("MERCURY", -0.3 * HeavenlyBody.AU, 0, 3, MAGENTA, 3.3e23, 0, 47000)
+    jupiter = HeavenlyBody("JUPITER", -4.0 * HeavenlyBody.AU, 0, 10, ORANGE, 1.9e27, 0, 15000)
 
-    planets = [sun, earth, mars, venus, mercury]
+    planets = [sun, earth, mars, venus, mercury, jupiter]
 
     pairs = generate_pairs(planets)
 
